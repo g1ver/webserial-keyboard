@@ -1,0 +1,18 @@
+extends layout.pug 
+
+block scripts
+    script(src="../static/javascripts/keyboard.js", defer)
+
+block content 
+    div(class="container")
+        div(id="header", class="border border-dark border-3 m-3 p-3 rounded")
+            button(id="conn-btn", type="button", class="btn btn-success mt-1") Connect
+        div(class="row align-items-start")
+            div(class="col")
+                div(id="musical-notes" class="musical-notes")
+                    h2 Notes: 
+            div(class="col")
+                h3 You played:
+                p(id="recorded-notes")
+                button(id="play-recorded-btn", type="button", class="btn btn-danger", disabled=true) Play
+                button(id="clear-recorded-btn", type="button", class="btn btn-secondary", disabled=true) Clear
