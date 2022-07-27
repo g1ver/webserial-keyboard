@@ -1,0 +1,16 @@
+div.piano-octave {
+    
+}
+
+.white-note {
+    float: left;
+    position: relative;
+    z-index: 1;
+}
+
+.black-note {
+    position: absolute;
+    right: 9px;
+    float: left;
+    z-index: 2;
+}

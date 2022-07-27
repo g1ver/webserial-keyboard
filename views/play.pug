@@ -5,14 +5,18 @@ block scripts
 
 block content 
     div(class="container")
-        div(id="header", class="border border-dark border-3 m-3 p-3 rounded")
-            button(id="conn-btn", type="button", class="btn btn-success mt-1") Connect
+        div(id="header", class="border border-dark bg-dark bg-opacity-10 shadow-lg border-1 m-3 p-3 rounded")
+            h4(class="text-light mx-auto") Setup
+            hr(class="divider-horizontal")
+            button(id="conn-btn", type="button", class="btn btn-success my-1 mb-2") Connect
         div(class="row align-items-start")
-            div(class="col")
+            div(class="col border border-dark bg-dark bg-opacity-10 shadow-lg border-1 rounded p-3 m-1")
                 div(id="musical-notes" class="musical-notes")
-                    h2 Notes: 
-            div(class="col")
-                h3 You played:
+                    h4(class="text-light mx-auto") Notes
+                    hr(class="divider-horizontal")
+            div(class="col border border-dark bg-dark bg-opacity-10 shadow-lg border-1 rounded p-3 m-1")
+                h4(class="text-light") Recorded Notes
+                hr(class="divider-horizontal")
                 p(id="recorded-notes")
                 button(id="play-recorded-btn", type="button", class="btn btn-danger", disabled=true) Play
-                button(id="clear-recorded-btn", type="button", class="btn btn-secondary", disabled=true) Clear
+                button(id="clear-recorded-btn", type="button", class="btn btn-secondary mx-1", disabled=true) Clear

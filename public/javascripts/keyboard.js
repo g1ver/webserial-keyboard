@@ -114,6 +114,7 @@ function updateRecorded(note, freq) {
     notes_played.push(note);
     freq_played.push(freq);
     const recorded_div = document.getElementById('recorded-notes');
+    recorded_div.className = "text-light";
     recorded_div.innerText = "";
     notes_played.forEach((note, index) => {
         let addin = "";
@@ -148,7 +149,7 @@ function addNoteButtons() {
             button_name = key + (index + 1);
             button.innerText = button_name;
             button.id = button_name + '-btn';
-            button.className = 'btn btn-primary note-btn';
+            button.className = 'btn btn-primary note-btn m-1';
             button.type = 'button';
             button.disabled = true;
             note_div.appendChild(button);
@@ -171,13 +172,13 @@ function updateConnButton() {
     const clear_button = document.getElementById("clear-recorded-btn");
     if (state) {
         button.innerHTML = 'Disconnect';
-        button.className = 'btn btn-warning mt-1'
+        button.className = 'btn btn-warning my-1'
         note_buttons.forEach(btn => btn.disabled = false)
         play_button.disabled = false;
         clear_button.disabled = false;
     } else {
         button.innerHTML = 'Connect';
-        button.className = 'btn btn-success mt-1'
+        button.className = 'btn btn-success my-1'
         note_buttons.forEach(btn => btn.disabled = true)
         play_button.disabled = true;
         clear_button.disabled = true;
@@ -195,11 +196,11 @@ function disconnectUI() {
 
 function deviceInfoUI(usbProductId, usbVendorId) {
     const header = document.getElementById('header');
-    const p = document.createElement('p')
-    p.id = 'device-info';
-    p.className = "mb-0";
-    p.innerHTML = `Device: 0x${usbProductId.toString(16)}:0x${usbVendorId.toString(16)}`
-    header.appendChild(p);
+    const t = document.createElement('p')
+    t.id = 'device-info';
+    t.className = "m-2 text-light font-monospace fw-light d-inline text-muted";
+    t.innerHTML = `[Device] 0x${usbProductId.toString(16)}:0x${usbVendorId.toString(16)}`
+    header.appendChild(t);
 }
 
 

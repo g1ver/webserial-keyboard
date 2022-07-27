@@ -1,0 +1,20 @@
+extends layout.pug
+
+block scripts
+    link(rel="stylesheet", href="../static/css/piano.css")
+
+block content 
+    hr
+    div(class="piano-octave position-absolute top-50 start-50 translate-middle")
+        button(id="C", type="button", class="white-note btn btn-outline-dark shadow-lg btn-light py-5 px-3 rounded-0")
+        button(id="Db",type="button", class="black-note btn btn-outline-light shadow-lg btn-dark py-4 px-2 rounded-0")
+        button(id="D", type="button", class="white-note btn btn-outline-dark shadow-lg btn-light py-5 px-3 rounded-0")
+        button(id="Eb",type="button", class="black-note btn btn-outline-light shadow-lg btn-dark py-4 px-2 rounded-0")
+        button(id="E", type="button", class="white-note btn btn-outline-dark shadow-lg btn-light py-5 px-3 rounded-0")
+        button(id="F", type="button", class="white-note btn btn-outline-dark shadow-lg btn-light py-5 px-3 rounded-0")
+        button(id="Gb", type="button", class="black-note btn btn-outline-light shadow-lg btn-dark py-4 px-2 rounded-0")
+        button(id="G", type="button", class="white-note btn btn-outline-dark shadow-lg btn-light py-5 px-3 rounded-0")
+        button(id="Ab",type="button", class="black-note btn btn-outline-light shadow-lg btn-dark py-4 px-2 rounded-0")
+        button(id="A", type="button", class="white-note btn btn-outline-dark shadow-lg btn-light py-5 px-3 rounded-0")
+        button(id="Bb",type="button", class="black-note btn btn-outline-light shadow-lg btn-dark py-4 px-2 rounded-0")
+        button(id="B", type="button", class="white-note btn btn-outline-dark shadow-lg btn-light py-5 px-3 rounded-0")

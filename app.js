@@ -33,11 +33,11 @@ app.get('/setup', (req, res) => {
  * - songs: download songs to be played by arduino
  */
 app.get('/kb/play', (req, res) => {
-    res.render('play', {title: 'Keyboard'});
+    res.render('play', {title: 'Synthesizer'});
 });
 
 app.get('/kb/compose', (req, res) => {
-    res.send('');
+    res.render('compose', {title: 'Composer'});
 });
 
 app.get('/kb/songs', (req, res) => {
