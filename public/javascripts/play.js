@@ -1,3 +1,5 @@
+import { WebSerialInterface } from "./modules/webSerial.js";
+
 let port;
 let reader;
 let readableStreamClosed;
@@ -146,7 +148,7 @@ function addNoteButtons() {
     notes.forEach((val, key) => {
         val.forEach((freq, index) => {
             const button = document.createElement('button');
-            button_name = key + (index + 1);
+            const button_name = key + (index + 1);
             button.innerText = button_name;
             button.id = button_name + '-btn';
             button.className = 'btn btn-primary note-btn m-1';

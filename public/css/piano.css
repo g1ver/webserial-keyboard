@@ -3,12 +3,17 @@ div.piano-octave {
 }
 
 .white-note {
+    padding-top: 90px !important;
+    width: 40px;
+    height: 120px;
     float: left;
     position: relative;
     z-index: 1;
 }
 
 .black-note {
+    width: 25px;
+    height: 60px;
     position: absolute;
     transform: translateX(-50%);
     z-index: 2;
