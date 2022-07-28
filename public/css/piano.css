@@ -10,7 +10,6 @@ div.piano-octave {
 
 .black-note {
     position: absolute;
-    right: 9px;
-    float: left;
+    transform: translateX(-50%);
     z-index: 2;
 }
