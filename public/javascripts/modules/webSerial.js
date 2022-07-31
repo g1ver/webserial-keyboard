@@ -36,7 +36,7 @@ export class WebSerialInterface {
         await this.writer.write(textInput + '\n');
         // TODO: byte codes for types of messages
         // TODO: use sendSerial to implement:
-        //          sendSong, sendNote,
+        //          sendNote, sendSong, saveSong
     }
 
     async receiveSerial() {
