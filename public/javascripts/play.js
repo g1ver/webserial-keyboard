@@ -70,10 +70,7 @@ function updateRecorded(note, freq) {
     recorded_div.className = "text-light";
     recorded_div.innerText = "";
     notes_played.forEach((note, index) => {
-        let addin = "";
-        if (index != 0)
-            addin = ", ";
-            
+        let addin = index == 0 ? "" : ", ";
         const txt = document.createTextNode(addin + note);
         recorded_div.appendChild(txt);
     });
