@@ -1,13 +1,6 @@
 import { WebSerialInterface } from "./modules/webSerial.js";
 
-let port;
-let reader;
-let readableStreamClosed;
-let writer;
-let writableStreamClosed;
-let textDecoder;
-let textEncoder;
-let state = false;
+const wsi = new WebSerialInterface();
 
 let notes_played = [];
 let freq_played = [];
@@ -16,11 +9,7 @@ addNoteButtons();
 
 document.getElementById('conn-btn')
     .addEventListener('click', async () => {
-        if (!state) {
-            await connect();
-        } else {
-            await disconnect();
-        }
+        wsi.connState ? await clickDisconnect() : await clickConnect();
     });
 
 document.getElementById('play-recorded-btn')
@@ -33,60 +22,22 @@ document.getElementById('clear-recorded-btn')
         clearRecorded();
     });
 
-async function connect() {    
+async function clickConnect() {    
     const filters = [
         {usbVendorId: 0x2341, usbProductId: 0x0043}
     ]
 
-    port = await navigator.serial.requestPort({filters});
-    
-    await port.open({baudRate: 9600});
-    let {usbProductId, usbVendorId } = await port.getInfo();
-    deviceInfoUI(usbVendorId, usbProductId);
-    state = true;
+    await wsi.connect(filters);
+    deviceInfoUI(wsi.portInfo);
     updateConnButton();
-    
-    textEncoder = new TextEncoderStream();
-    writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
-    writer = textEncoder.writable.getWriter();
-
-    textDecoder = new TextDecoderStream();
-    readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
-    reader = textDecoder.readable
-        .pipeThrough(new TransformStream(new LineBreakTransformer()))
-        .getReader();
-    
-    await readSerial();
+    await wsi.receiveSerial();
 }
 
-async function disconnect() {
-    reader.cancel();
-    await readableStreamClosed.catch(() => { /* Ignore */ });
-
-    writer.close();
-    await writableStreamClosed;
-
-    await port.close();
-    state = false;
+async function clickDisconnect() {
+    await wsi.disconnect();
     disconnectUI();
     updateConnButton();
     clearRecorded();
-}
-
-async function sendSerial(text_input, code="0x0") {
-    // await writer.write(code + '\n');
-    await writer.write(text_input + '\n');
-}
-
-async function readSerial() {
-    while (true) {
-        const { value, done } = await reader.read();
-        if (done) {
-            reader.releaseLock();
-            break;
-        }
-        console.log(value);
-    }
 }
 
 function sleep(ms) {
@@ -95,9 +46,9 @@ function sleep(ms) {
 
 async function playRecorded() {
     for (const freq of freq_played) {
-        await sendSerial(freq);
+        await wsi.sendSerial(freq);
         await sleep(100);
-        await sendSerial('END');
+        await wsi.sendSerial('END');
         await sleep(100 * 1.3);
     }
 }
@@ -132,23 +83,25 @@ function addNoteButtons() {
     const notes = new Map([
         ['C', [33, 65, 131, 262, 523, 1047, 2093, 4186]],
         ['Db', [35, 69, 139, 277, 554, 1109, 2217, 4435]],
-        ['D', [37, 73, 147, 294, 587, 1175, 2349, 4699]],
-        ['Eb', [39, 78, 156, 311, 622, 1245, 2489, 4978]],
+        ['D', [37, 73, 147, 294, 587, 1175, 2349]],
+        ['Eb', [39, 78, 156, 311, 622, 1245, 2489]],
         ['E', [41, 82, 165, 330, 659, 1319, 2637]],
         ['F', [44, 87, 175, 349, 698, 1397, 2794]],
         ['Gb', [46, 93, 185, 370, 740, 1480, 2960]],
         ['G', [49, 98, 196, 392, 784, 1568, 3136]],
         ['Ab', [52, 104, 208, 415, 831, 1661, 3322]],
-        ['A', [55, 110, 220, 440, 880, 1760, 3520]],
+        ['A', [28, 55, 110, 220, 440, 880, 1760, 3520]],
         ['Bb', [58, 117, 233, 466, 932, 1865, 3729]],
-        ['B', [62, 123, 247, 494, 988, 1976, 3951]],
+        ['B', [31, 62, 123, 247, 494, 988, 1976, 3951]],
     ]);
     const note_div = document.getElementById('musical-notes');
 
     notes.forEach((val, key) => {
         val.forEach((freq, index) => {
             const button = document.createElement('button');
-            const button_name = key + (index + 1);
+            
+            const button_name = key == "A" || key == "B" ? key + index : key + (index + 1);
+
             button.innerText = button_name;
             button.id = button_name + '-btn';
             button.className = 'btn btn-primary note-btn m-1';
@@ -156,11 +109,11 @@ function addNoteButtons() {
             button.disabled = true;
             note_div.appendChild(button);
             button.addEventListener('mousedown', async () => {
-                await sendSerial(freq);
+                await wsi.sendSerial(freq);
                 updateRecorded(button.innerText, freq);
             })
             button.addEventListener('mouseup', async () => {
-                await sendSerial('END');
+                await wsi.sendSerial('END');
             })
         });
         note_div.appendChild(document.createElement('br'));
@@ -172,7 +125,7 @@ function updateConnButton() {
     const note_buttons = Array.from(document.getElementsByClassName('note-btn'));
     const play_button = document.getElementById("play-recorded-btn");
     const clear_button = document.getElementById("clear-recorded-btn");
-    if (state) {
+    if (wsi.connState) {
         button.innerHTML = 'Disconnect';
         button.className = 'btn btn-warning my-1'
         note_buttons.forEach(btn => btn.disabled = false)
@@ -196,32 +149,11 @@ function disconnectUI() {
     }
 }
 
-function deviceInfoUI(usbProductId, usbVendorId) {
+function deviceInfoUI(portInfo) {
     const header = document.getElementById('header');
     const t = document.createElement('p')
     t.id = 'device-info';
     t.className = "m-2 text-light font-monospace fw-light d-inline text-muted";
-    t.innerHTML = `[Device] 0x${usbProductId.toString(16)}:0x${usbVendorId.toString(16)}`
+    t.innerHTML = `[Device] 0x${portInfo.usbVendorId.toString(16)}:0x${portInfo.usbProductId.toString(16)}`
     header.appendChild(t);
 }
-
-
-/**
- * Text Transformer
- */
- class LineBreakTransformer {
-    constructor() {
-      this.chunks = "";
-    }
-  
-    transform(chunk, controller) {
-      this.chunks += chunk;
-      const lines = this.chunks.split("\r\n");
-      this.chunks = lines.pop();
-      lines.forEach((line) => controller.enqueue(line));
-    }
-  
-    flush(controller) {
-      controller.enqueue(this.chunks);
-    }
-  }
