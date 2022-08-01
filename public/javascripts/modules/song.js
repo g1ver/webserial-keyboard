@@ -1,6 +1,6 @@
 export class Song {
     /**
-     * 
+     *
      * @param {String} name The name of the song.
      * @param {Date} date The date when the song is uploaded.
      * @param {String} uploader The name of the uploader/creator of the song.
