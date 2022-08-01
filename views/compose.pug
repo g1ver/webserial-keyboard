@@ -2,19 +2,8 @@ extends layout.pug
 
 block scripts
     link(rel="stylesheet", href="../static/css/piano.css")
+    script(src="../static/javascripts/compose.js", type="module")
 
 block content 
     hr
-    div(class="synthesizer-keyboard")
-        button(id="C", type="button", class="white-note btn btn-outline-dark shadow-lg btn-light rounded-0")
-        button(id="Db",type="button", class="black-note btn btn-outline-light shadow-lg btn-dark rounded-0")
-        button(id="D", type="button", class="white-note btn btn-outline-dark shadow-lg btn-light rounded-0")
-        button(id="Eb",type="button", class="black-note btn btn-outline-light shadow-lg btn-dark rounded-0")
-        button(id="E", type="button", class="white-note btn btn-outline-dark shadow-lg btn-light rounded-0")
-        button(id="F", type="button", class="white-note btn btn-outline-dark shadow-lg btn-light rounded-0")
-        button(id="Gb",type="button", class="black-note btn btn-outline-light shadow-lg btn-dark rounded-0")
-        button(id="G", type="button", class="white-note btn btn-outline-dark shadow-lg btn-light rounded-0")
-        button(id="Ab",type="button", class="black-note btn btn-outline-light shadow-lg btn-dark rounded-0")
-        button(id="A", type="button", class="white-note btn btn-outline-dark shadow-lg btn-light rounded-0")
-        button(id="Bb",type="button", class="black-note btn btn-outline-light shadow-lg btn-dark rounded-0")
-        button(id="B", type="button", class="white-note btn btn-outline-dark shadow-lg btn-light rounded-0")
+    div(id="synthesizer-keyboard", class="synthesizer-keyboard")
