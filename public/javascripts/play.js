@@ -88,7 +88,7 @@ function addNoteButtons() {
         ['G', [49, 98, 196, 392, 784, 1568, 3136]],
         ['Ab', [52, 104, 208, 415, 831, 1661, 3322]],
         ['A', [28, 55, 110, 220, 440, 880, 1760, 3520]],
-        ['Bb', [58, 117, 233, 466, 932, 1865, 3729]],
+        ['Bb', [29, 58, 117, 233, 466, 932, 1865, 3729]],
         ['B', [31, 62, 123, 247, 494, 988, 1976, 3951]],
     ]);
     const note_div = document.getElementById('musical-notes');
@@ -97,7 +97,7 @@ function addNoteButtons() {
         val.forEach((freq, index) => {
             const button = document.createElement('button');
             
-            const button_name = key == "A" || key == "B" ? key + index : key + (index + 1);
+            const button_name = key == "A" || key == "B" || key == "Bb" ? key + index : key + (index + 1);
 
             button.innerText = button_name;
             button.id = button_name + '-btn';
