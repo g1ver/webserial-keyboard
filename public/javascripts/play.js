@@ -1,5 +1,5 @@
 import { WebSerialInterface } from "./modules/webSerial.js";
-import notes_data from "./notes.json" assert { type: "json" };
+import notes_data from "../json/notes.json" assert { type: "json" };
 
 const wsi = new WebSerialInterface();
 
