@@ -8,7 +8,7 @@ block content
     hr
     div(class="container")
         div(class="row align-items-start")
-            div(class="col border border-dark bg-dark bg-opacity-10 shadow-lg border-1 rounded p-3 m-1")
+            div(id="setup-div", class="col border border-dark bg-dark bg-opacity-10 shadow-lg border-1 rounded p-3 m-1")
                 h4(class="text-light mx-auto") Setup
                 hr(class="divider-horizontal")
                 button(id="conn-btn", type="button", class="btn btn-success") Connect
@@ -22,12 +22,13 @@ block content
                     button(type="button", class="btn btn-primary my-1", id="set-settings") Set
                     button(type="button", class="btn btn-success my-1 mx-1", id="play-btn") Play
                     button(type="button", class="btn btn-danger my-1", id="stop-btn") Stop
+                    button(type="button", class="btn btn-primary float-end my-1", id="stop-btn") Upload
                 h8(class="text-white-50") *4/4 time signature
         div(class="row align-items-start")
             div(class="col-md-auto border border-dark bg-dark bg-opacity-10 shadow-lg border-1 rounded p-3 m-1")
                 h4(class="text-light") Synthesizer
                 hr(class="divider-horizontal")
-                h6(class="text-light pb-1") Selected Note: X
+                h6(id="selected-note", class="text-light pb-1") Selected Note: X
                 div(id="synthesizer-keyboard", class="synthesizer-keyboard")
             div(class="col border border-dark bg-dark bg-opacity-10 shadow-lg border-1 rounded p-3 m-1")
                 h4(class="text-light") Recorded Notes
