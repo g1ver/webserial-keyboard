@@ -12,9 +12,9 @@ const wsi = new WebSerialInterface();
 const recorder = new RecorderState();
 buildSynth();
 
-// TODO: fix button padding with note,
+// TODO: 
 // play note when pressing recorded note,
-// figure out datastructure to hold songs
+// implement debug output
 // error checking is lacking, but I may not have enough time...
 
 document.getElementById("conn-btn").addEventListener("click", async () => {

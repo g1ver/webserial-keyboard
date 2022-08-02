@@ -12,17 +12,22 @@ block content
                 h4(class="text-light mx-auto") Setup
                 hr(class="divider-horizontal")
                 button(id="conn-btn", type="button", class="btn btn-success") Connect
+                div(class="form-check form-switch float-end")
+                    input(class="form-check-input", type="checkbox", role="switch", id="debug-switch")
+                    label(class="form-check-label text-light", for="debug-switch") Debug
             div(class="col-md-auto border border-dark bg-dark bg-opacity-10 shadow-lg border-1 rounded p-3 m-1")
                 h4(class="text-light") Settings
                 hr(class="divider-horizontal")
-                div(class="input-group")
-                    input(type="number", class="bg-dark text-light" id="setting-tempo", placeholder="Tempo (BPM)")
-                    input(type="number", class="bg-dark text-light" id="setting-duration", placeholder="Duration (sec)")
-                div(class="play-controls")
-                    button(type="button", class="btn btn-primary my-1", id="set-settings") Set
-                    button(type="button", class="btn btn-success my-1 mx-1", id="play-btn") Play
-                    button(type="button", class="btn btn-danger my-1", id="stop-btn") Stop
-                    button(type="button", class="btn btn-primary float-end my-1", id="stop-btn") Upload
+                div(class="input-group gap-1")
+                    input(type="number", class="bg-dark text-light rounded" id="setting-tempo", placeholder="Tempo (BPM)")
+                    input(type="number", class="bg-dark text-light rounded" id="setting-duration", placeholder="Duration (sec)")
+                div(class="play-controls hstack gap-1 mt-1")
+                    button(type="button", class="btn btn-primary", id="set-settings") Set
+                    div(class="vr border border-light")
+                    button(type="button", class="btn btn-success", id="play-btn") Play
+                    button(type="button", class="btn btn-danger", id="stop-btn") Stop
+                    div(class="vr border border-light")
+                    button(type="button", class="btn btn-primary", id="stop-btn") Upload
                 h8(class="text-white-50") *4/4 time signature
         div(class="row align-items-start")
             div(class="col-md-auto border border-dark bg-dark bg-opacity-10 shadow-lg border-1 rounded p-3 m-1")
