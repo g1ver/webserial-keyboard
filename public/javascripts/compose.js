@@ -5,14 +5,14 @@ import { RecorderState } from "./modules/sheetMusic.js";
 
 let selectedNote = {
     note: "X",
-    freq: 0
+    freq: 0,
 };
 
 const wsi = new WebSerialInterface();
 const recorder = new RecorderState();
 buildSynth();
 
-// TODO: 
+// TODO:
 // play note when pressing recorded note,
 // implement debug output
 // error checking is lacking, but I may not have enough time...
@@ -28,6 +28,8 @@ document.getElementById("set-settings").addEventListener("click", () => {
 document.getElementById("play-btn").addEventListener("click", async () => {
     recorder.buildSongArr();
 });
+
+async function handleDebugMessage(message) {}
 
 async function clickConnect() {
     const filters = [{ usbVendorId: 0x2341, usbProductId: 0x0043 }];
@@ -123,10 +125,10 @@ function buildSynth() {
 function buildSheet() {
     const MEASURES_PER_LINE = 3;
     const BEATS_PER_MEASURE = 4;
-    const NOTE_LENGTH = 1/4;
+    const NOTE_LENGTH = 1 / 4;
     const tempo = 120;
     const duration = 60;
-    
+
     // TODO: these values need to be rational for the implementation,
     // so change implementation or floor these values
 
@@ -135,17 +137,24 @@ function buildSheet() {
     const measureRows = measures / MEASURES_PER_LINE;
     const noteAmount = measures * BEATS_PER_MEASURE;
 
-    recorder.setSettings(noteAmount, duration, tempo, measures, BEATS_PER_MEASURE, NOTE_LENGTH);
-    
+    recorder.setSettings(
+        noteAmount,
+        duration,
+        tempo,
+        measures,
+        BEATS_PER_MEASURE,
+        NOTE_LENGTH
+    );
+
     const table = document.getElementById("music-table");
-    
+
     let buttonId = 0;
-    
+
     // TODO: this can be faster, but not enough time
     for (let i = 0; i < measureRows; i++) {
         const measureRow = document.createElement("tr");
         measureRow.id = "measure-" + i;
-        
+
         for (let j = 0; j < MEASURES_PER_LINE; j++) {
             const measure = document.createElement("td");
 
@@ -156,11 +165,14 @@ function buildSheet() {
                 button.className = "btn btn-dark btn-outline-light";
                 button.addEventListener("click", () => {
                     button.innerText = selectedNote.note;
-                    recorder.updateNote(button.id.split('-')[1], selectedNote.freq);
+                    recorder.updateNote(
+                        button.id.split("-")[1],
+                        selectedNote.freq
+                    );
                 });
                 button.addEventListener("dblclick", () => {
                     button.innerText = "X";
-                    recorder.updateNote(button.id.split('-')[1], "X");
+                    recorder.updateNote(button.id.split("-")[1], "X");
                 });
                 measure.appendChild(button);
                 buttonId++;
