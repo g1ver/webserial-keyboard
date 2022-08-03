@@ -3,48 +3,67 @@ import notes_data from "../json/notes.json" assert { type: "json" };
 import keys_data from "../json/keys.json" assert { type: "json" };
 import { RecorderState } from "./modules/sheetMusic.js";
 
+// TODO:
+// play note when pressing recorded note,
+// implement debug output
+// error checking is lacking, but I may not have enough time...
+
 let selectedNote = {
     note: "X",
     freq: 0,
 };
 
-const wsi = new WebSerialInterface();
+let debugSwitch = false;
+let setState = false;
+let debugMessages = [];
+const wsi = new WebSerialInterface(debugMessage);
 const recorder = new RecorderState();
 buildSynth();
 
-// TODO:
-// play note when pressing recorded note,
-// implement debug output
-// error checking is lacking, but I may not have enough time...
+async function debugMessage(message) {
+    const time = new Date();
+    const timestamp = `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}.${time.getMilliseconds()}`;
+    debugMessages.push(`${timestamp} ${message}`);
+    drawDebug();
+}
 
 document.getElementById("conn-btn").addEventListener("click", async () => {
     wsi.connState ? await clickDisconnect() : await clickConnect();
 });
 
 document.getElementById("set-settings").addEventListener("click", () => {
+    setUpdateUI();
     buildSheet();
 });
 
 document.getElementById("play-btn").addEventListener("click", async () => {
+    await debugMessage("[*] Building song.");
     recorder.buildSongArr();
 });
 
-async function handleDebugMessage(message) {}
+document.getElementById("debug-switch").addEventListener("click", () => {
+    debugSwitch = !debugSwitch;
+    renderDebugWindow();
+});
+
+document.getElementById("filter-select").addEventListener("click", () => {
+    drawDebug();
+});
 
 async function clickConnect() {
-    const filters = [{ usbVendorId: 0x2341, usbProductId: 0x0043 }];
-
+    const filters = [{ usbVendorId: 0x2341, usbProductId: 0x0043 }]; // arduino uno
     await wsi.connect(filters);
     deviceInfoUI(wsi.portInfo);
     updateConnButton();
+    await debugMessage("[*] Connected.");
     await wsi.receiveSerial();
 }
 
 async function clickDisconnect() {
     await wsi.disconnect();
+    await debugMessage("[*] Disconnected.");
     disconnectUI();
     updateConnButton();
-    clearRecorded();
 }
 
 async function changeSelectedNote(freq) {
@@ -84,10 +103,54 @@ function orderedNotes(json_notes) {
 /**
  * UI FUNCTIONS
  */
+function setUpdateUI() {
+    const setButton = document.getElementById("set-settings");
+    if (setState) {
+        const table = document.getElementById("music-table");
+
+        while (table.lastChild) {
+            table.removeChild(table.lastChild);
+        }
+
+        setState = false;
+        debugMessage("[*] Reset composer.");
+    } else {
+        setButton.innerText = "Reset";
+    }
+}
+
+function drawDebug() {
+    const debugWindow = document.getElementById("debug-text");
+    let debugString = "";
+    const textSelect = document.getElementById("filter-select");
+    const textSelectOption =
+        textSelect.options[textSelect.selectedIndex].innerText;
+    const debugFiltered = debugMessages.filter((msg) => {
+        if (textSelectOption === "filters" || msg.includes("[*]")) return true;
+        return msg.includes(textSelectOption);
+    });
+
+    debugFiltered.reverse();
+    debugFiltered.forEach((msg) => {
+        debugString = debugString.concat(msg + "<br>");
+    });
+
+    debugWindow.innerHTML = debugString;
+}
+
 function renderSelectedNote() {
     document.getElementById(
         "selected-note"
     ).innerText = `Selected Note: ${selectedNote.note}`;
+}
+
+function renderDebugWindow() {
+    const hiddenDiv = document.getElementById("debug-div");
+    if (debugSwitch) {
+        hiddenDiv.hidden = false;
+    } else {
+        hiddenDiv.hidden = true;
+    }
 }
 
 function buildSynth() {
@@ -128,6 +191,10 @@ function buildSheet() {
     const NOTE_LENGTH = 1 / 4;
     const tempo = 120;
     const duration = 60;
+
+    debugMessage(
+        `[*] Building music sheet, tempo ${tempo}, duration ${duration}`
+    );
 
     // TODO: these values need to be rational for the implementation,
     // so change implementation or floor these values
@@ -181,21 +248,20 @@ function buildSheet() {
         }
         table.appendChild(measureRow);
     }
+    setState = true;
 }
 
 function updateConnButton() {
     const button = document.getElementById("conn-btn");
-    const note_buttons = Array.from(
-        document.getElementsByClassName("note-btn")
-    );
+    const noteButtons = Array.from(document.getElementsByClassName("note-btn"));
     if (wsi.connState) {
         button.innerHTML = "Disconnect";
         button.className = "btn btn-warning my-1";
-        note_buttons.forEach((btn) => (btn.disabled = false));
+        noteButtons.forEach((btn) => (btn.disabled = false));
     } else {
         button.innerHTML = "Connect";
         button.className = "btn btn-success my-1";
-        note_buttons.forEach((btn) => (btn.disabled = true));
+        noteButtons.forEach((btn) => (btn.disabled = true));
     }
 }
 
@@ -208,12 +274,12 @@ function disconnectUI() {
 }
 
 function deviceInfoUI(portInfo) {
-    const header = document.getElementById("setup-div");
+    const setupDiv = document.getElementById("setup-div");
     const t = document.createElement("p");
     t.id = "device-info";
     t.className = "m-2 text-light font-monospace fw-light d-inline text-muted";
     t.innerHTML = `[Device] 0x${portInfo.usbVendorId.toString(
         16
     )}:0x${portInfo.usbProductId.toString(16)}`;
-    header.appendChild(t);
+    setupDiv.appendChild(t);
 }

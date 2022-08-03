@@ -45,7 +45,11 @@ export class RecorderState {
 
             songArr.push(note);
         });
-        console.log(songArr);
+        this.song = songArr;
+    }
+
+    playSong(wsi) {
+        
     }
 
     exportSong() {}

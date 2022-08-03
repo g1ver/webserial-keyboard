@@ -1,5 +1,7 @@
 export class WebSerialInterface {
-    constructor() {}
+    constructor(debug) {
+        this.debugInterface = debug;
+    }
 
     async connect(filters) {
         // setup port
@@ -40,6 +42,7 @@ export class WebSerialInterface {
 
     async sendSerial(textInput, code = 0x0) {
         await this.writer.write(textInput + "\n");
+        await this.debugInterface(`[send] ${textInput}`);
         // TODO: byte codes for types of messages
         // TODO: use sendSerial to implement:
         //          sendNote, sendSong, saveSong
@@ -52,7 +55,7 @@ export class WebSerialInterface {
                 this.reader.releaseLock();
                 break;
             }
-            console.log(value);
+            await this.debugInterface(`[recv] ${value}`);
         }
     }
 }
