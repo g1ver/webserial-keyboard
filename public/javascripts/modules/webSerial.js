@@ -40,12 +40,11 @@ export class WebSerialInterface {
         this.connState = false;
     }
 
-    async sendSerial(textInput, code = 0x0) {
+    async sendSerial(textInput) {
+        // cannot do actual byte codes because of the writer implementation
+        // it always sends as a string...
         await this.writer.write(textInput + "\n");
         await this.debugInterface(`[send] ${textInput}`);
-        // TODO: byte codes for types of messages
-        // TODO: use sendSerial to implement:
-        //          sendNote, sendSong, saveSong
     }
 
     async receiveSerial() {

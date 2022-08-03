@@ -1,5 +1,8 @@
 export class RecorderState {
-    constructor() {}
+    constructor(wsi, debug) {
+        this.wsi = wsi;
+        this.debug = debug;
+    }
 
     setSettings(
         noteCount,
@@ -45,11 +48,48 @@ export class RecorderState {
 
             songArr.push(note);
         });
+
+        // strip out dead notes at end
+        if (songArr[songArr.length - 1].freq === "X") {
+            songArr.pop();
+        }
         this.song = songArr;
     }
 
-    playSong(wsi) {
-        
+    sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async stopPlaying() {
+        const stopCode = "END";
+        await this.wsi.sendSerial(stopCode);
+    }
+
+    async playNote(freq) {
+        const playNoteCode = "NOTE";
+        await this.wsi.sendSerial(playNoteCode);
+        await this.wsi.sendSerial(freq);
+    }
+
+    async stopButton() {
+        this.stopNow = true;
+    }
+
+    async playSong() {
+        this.debug("[*] Starting song.")
+        for (const note of this.song) {
+            if (this.stopNow) {
+                this.stopNow = false;
+                break;
+            }
+
+            let { freq, timing } = note;
+
+            await this.playNote(freq);
+            await this.debug(`[*] sleeping: ${timing} sec`);
+            await this.sleep(timing * 1000);
+            await this.stopPlaying();
+        }
     }
 
     exportSong() {}

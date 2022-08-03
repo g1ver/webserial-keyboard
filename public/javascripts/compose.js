@@ -5,7 +5,8 @@ import { RecorderState } from "./modules/sheetMusic.js";
 
 // TODO:
 // play note when pressing recorded note,
-// implement debug output
+// time signatures (maybe select common ones to not worry about fractional notes?)
+// may have to redo the whole sheet builder though
 // error checking is lacking, but I may not have enough time...
 
 let selectedNote = {
@@ -17,7 +18,7 @@ let debugSwitch = false;
 let setState = false;
 let debugMessages = [];
 const wsi = new WebSerialInterface(debugMessage);
-const recorder = new RecorderState();
+const recorder = new RecorderState(wsi, debugMessage);
 buildSynth();
 
 async function debugMessage(message) {
@@ -39,6 +40,7 @@ document.getElementById("set-settings").addEventListener("click", () => {
 document.getElementById("play-btn").addEventListener("click", async () => {
     await debugMessage("[*] Building song.");
     recorder.buildSongArr();
+    recorder.playSong();
 });
 
 document.getElementById("debug-switch").addEventListener("click", () => {
@@ -48,6 +50,10 @@ document.getElementById("debug-switch").addEventListener("click", () => {
 
 document.getElementById("filter-select").addEventListener("click", () => {
     drawDebug();
+});
+
+document.getElementById('stop-btn').addEventListener("click", () => {
+    recorder.stopButton();
 });
 
 async function clickConnect() {
@@ -173,11 +179,11 @@ function buildSynth() {
                     ? "white-note btn btn-outline-dark shadow-lg btn-light rounded-0"
                     : "black-note btn btn-outline-light shadow-lg btn-dark rounded-0";
             button.addEventListener("mousedown", async () => {
-                await wsi.sendSerial(freq);
+                await recorder.playNote(freq);
                 await changeSelectedNote(freq);
             });
             button.addEventListener("mouseup", async () => {
-                await wsi.sendSerial("END");
+                await recorder.stopPlaying();
             });
             div.appendChild(button);
             note++;
@@ -187,9 +193,9 @@ function buildSynth() {
 
 function buildSheet() {
     const MEASURES_PER_LINE = 3;
-    const BEATS_PER_MEASURE = 4;
-    const NOTE_LENGTH = 1 / 4;
-    const tempo = 120;
+    const BEATS_PER_MEASURE = 16;
+    const NOTE_LENGTH = 1 / BEATS_PER_MEASURE;
+    const tempo = 180;
     const duration = 60;
 
     debugMessage(
@@ -199,7 +205,7 @@ function buildSheet() {
     // TODO: these values need to be rational for the implementation,
     // so change implementation or floor these values
 
-    // duration is in seconds
+    // duration is in seconds, need minutes
     const measures = ((duration / 60) * tempo) / BEATS_PER_MEASURE;
     const measureRows = measures / MEASURES_PER_LINE;
     const noteAmount = measures * BEATS_PER_MEASURE;
