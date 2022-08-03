@@ -35,7 +35,7 @@ block content
                     button(type="button", class="btn btn-success", id="play-btn") Play
                     button(type="button", class="btn btn-danger", id="stop-btn") Stop
                     div(class="vr border border-light")
-                    button(type="button", class="btn btn-primary", id="stop-btn") Upload
+                    button(type="button", class="btn btn-primary", data-bs-toggle="modal", data-bs-target="#upload-modal", id="upload-btn") Upload
                 h8(class="text-white-50") *4/4 time signature
         div(class="row align-items-start")
             div(class="col-md-auto border border-dark bg-dark bg-opacity-10 shadow-lg border-1 rounded p-3 m-1")
@@ -49,3 +49,24 @@ block content
                 div(class="music-sheet")
                     table(id="music-table", class="table table-dark table-striped-columns")
                 
+    //- UPLOAD MODAL
+    div(class="modal fade bg-dark", id="upload-modal", tabindex="-1" aria-labelledby="upload-modal" aria-hidden="true")
+        div(class="modal-dialog")
+            div(class="modal-content")
+                div(class="modal-header")
+                    h5(class="modal-title" id="modal-label") Song Upload
+                    button(type="button", class="btn-close", data-bs-dismiss="modal" aria-label="Close")
+                div(class="modal-body")
+                    div(class="input-group mb-3")
+                        span(class="input-group-text") Username
+                        input(type="text", id="username-modal", class="form-control", aria-label="user-name", aria-describedby="username-modal")
+                    div(class="input-group mb-3")
+                        span(class="input-group-text" ) Song Name
+                        input(type="text", id="song-modal", class="form-control", aria-label="user-name", aria-describedby="username-modal")
+                    div(class="input-group mb-3")
+                        span(class="input-group-text") Song Description
+                        input(type="text", id="desc-modal", class="form-control", aria-label="user-name", aria-describedby="username-modal")
+
+                div(class="modal-footer")
+                    button(type="button" class="btn btn-secondary" data-bs-dismiss="modal") Close
+                    button(type="button" class="btn btn-primary", id="send-upload") Upload
