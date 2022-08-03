@@ -76,7 +76,7 @@ export class RecorderState {
     }
 
     async playSong() {
-        this.debug("[*] Starting song.")
+        this.debug("[*] Starting song.");
         for (const note of this.song) {
             if (this.stopNow) {
                 this.stopNow = false;
@@ -92,7 +92,24 @@ export class RecorderState {
         }
     }
 
-    exportSong() {}
+    exportSong(songName, uploaderName, description) {
+        const song = new Song(
+            songName,
+            new Date(),
+            uploaderName,
+            description,
+            this.song,
+            {
+                noteCount: this.noteCount,
+                duration: this.duration,
+                tempo: this.tempo,
+                measures: this.measures,
+                beatsPerMeasure: this.beatsPerMeasure,
+                noteLength: this.noteLength,
+            }
+        );
+        return song;
+    }
 }
 
 export class Song {
@@ -102,13 +119,15 @@ export class Song {
      * @param {Date} date The date when the song is uploaded.
      * @param {String} uploader The name of the uploader/creator of the song.
      * @param {Boolean} imported If the song was imported from MIDI.
-     * @param {Array.<number, number>} song Array of [note, timing]
+     * @param {Array.<note>} song Array of note: [freq, timing]
      */
-    constructor(name, date, uploader, imported, song) {
+    constructor(name, date, uploader, description, song, songMetadata) {
         this.name = name;
         this.date = date;
         this.uploader = uploader;
-        this.imported = imported;
+        this.description = description;
         this.song = song;
+        this.songMetadata = songMetadata;
+        // this.imported = imported;
     }
 }

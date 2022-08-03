@@ -1,13 +1,15 @@
 import { WebSerialInterface } from "./modules/webSerial.js";
-import notes_data from "../json/notes.json" assert { type: "json" };
-import keys_data from "../json/keys.json" assert { type: "json" };
 import { RecorderState } from "./modules/sheetMusic.js";
+import notesData from "../json/notes.json" assert { type: "json" };
+import keysData from "../json/keys.json" assert { type: "json" };
+import uploadedSongs from "../json/uploadedSongs.json" assert { type: "json" };
 
 // TODO:
 // play note when pressing recorded note,
 // time signatures (maybe select common ones to not worry about fractional notes?)
-// may have to redo the whole sheet builder though
+//      - may have to redo the whole sheet builder though
 // error checking is lacking, but I may not have enough time...
+// make an actual REST API instead of using a JSON file
 
 let selectedNote = {
     note: "X",
@@ -52,9 +54,31 @@ document.getElementById("filter-select").addEventListener("click", () => {
     drawDebug();
 });
 
-document.getElementById('stop-btn').addEventListener("click", () => {
+document.getElementById("stop-btn").addEventListener("click", async () => {
+    await debugMessage("[*] Stopping song after next note.")
     recorder.stopButton();
 });
+
+document.getElementById("send-upload").addEventListener("click", async () => {
+    await debugMessage("[*] Attempting to upload song")
+    uploadSong();
+});
+
+async function uploadSong() {
+    const uploaderName = document.getElementById("username-modal").value;
+    const songName = document.getElementById("song-modal").value;
+    const description = document.getElementById("desc-modal").value;
+
+    const song = recorder.exportSong(songName, uploaderName, description);
+    const resp = await fetch("/kb/uploads", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(song)
+    });
+    console.log(resp.json());
+}
 
 async function clickConnect() {
     const filters = [{ usbVendorId: 0x2341, usbProductId: 0x0043 }]; // arduino uno
@@ -79,7 +103,7 @@ async function changeSelectedNote(freq) {
 }
 
 function noteStringFromFreq(freq) {
-    const notes = populateNotesMap(notes_data);
+    const notes = populateNotesMap(notesData);
     let note;
     for (let entry of notes) {
         const octaves = entry[1];
@@ -161,8 +185,8 @@ function renderDebugWindow() {
 
 function buildSynth() {
     const synth = document.getElementById("synthesizer-keyboard");
-    const keys = JSON.parse(JSON.stringify(keys_data))["keys"];
-    const notes = orderedNotes(notes_data);
+    const keys = JSON.parse(JSON.stringify(keysData))["keys"];
+    const notes = orderedNotes(notesData);
 
     let note = 0;
     keys.forEach((octave) => {
@@ -193,9 +217,9 @@ function buildSynth() {
 
 function buildSheet() {
     const MEASURES_PER_LINE = 3;
-    const BEATS_PER_MEASURE = 16;
+    const BEATS_PER_MEASURE = 4;
     const NOTE_LENGTH = 1 / BEATS_PER_MEASURE;
-    const tempo = 180;
+    const tempo = 120;
     const duration = 60;
 
     debugMessage(

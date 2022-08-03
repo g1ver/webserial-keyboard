@@ -28,28 +28,29 @@ app.get("/setup", (req, res) => {
 
 /**
  * keyboard functionality
- * - play: click notes and hear them
  * - compose: record notes to be sent to arduino
- * - songs: download songs to be played by arduino
+ * - uploads: pick songs to be sent arduino
  */
-app.get("/kb/play", (req, res) => {
-    res.render("play", { title: "Synthesizer" });
-});
 
 app.get("/kb/compose", (req, res) => {
     res.render("compose", { title: "Composer" });
 });
 
-app.get("/kb/songs", (req, res) => {
+app.get("/kb/uploads", (req, res) => {
     res.send("");
+});
+
+app.post("/kb/uploads", (req, res) => {
+    console.log(req.body);
+    res.send();
 });
 
 /**
  * import songs from midi files to be played
  */
-app.get("/import", (req, res) => {
-    res.send("");
-});
+// app.get("/import", (req, res) => {
+//     res.send("");
+// });
 
 app.listen(port, () => {
     console.log(`🚀 Server ready at: http://${host}:${port}`);
