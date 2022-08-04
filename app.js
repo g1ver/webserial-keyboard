@@ -32,7 +32,7 @@ app.get("/setup", (req, res) => {
  * - uploads: pick songs to be sent arduino
  */
 
-app.get("/kb/compose", (req, res) => {
+app.get("/kb/composer", (req, res) => {
     res.render("compose", { title: "Composer" });
 });
 
