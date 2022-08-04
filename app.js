@@ -8,10 +8,6 @@ app.use("/static", express.static(path.join(__dirname, "public")));
 
 app.set("view engine", "pug");
 
-app.get("/layout", (req, res) => {
-    res.render("layout", { title: "Header Test" });
-});
-
 /**
  * homepage, what the project is about, cv path, etc
  */
@@ -36,14 +32,14 @@ app.get("/kb/composer", (req, res) => {
     res.render("compose", { title: "Composer" });
 });
 
-app.get("/kb/uploads", (req, res) => {
-    res.send("");
-});
+// app.get("/kb/uploads", (req, res) => {
+//     res.send("");
+// });
 
-app.post("/kb/uploads", (req, res) => {
-    console.log(req.body);
-    res.send();
-});
+// app.post("/kb/uploads", (req, res) => {
+//     console.log(req.body);
+//     res.send();
+// });
 
 /**
  * import songs from midi files to be played
